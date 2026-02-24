@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ticket Enterprise Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --accent: #38bdf8;
+            --bg-start: #eaf4ff;
+            --bg-end: #dbeafe;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            color: #1e293b;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Particles */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(56, 189, 248, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 35%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 50%; animation-delay: 0s; }
+        .particle:nth-child(5) { left: 65%; animation-delay: 3s; }
+        .particle:nth-child(6) { left: 80%; animation-delay: 6s; }
+        .particle:nth-child(7) { left: 90%; animation-delay: 1s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* PREMIUM GLASSMORPHISM NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 60px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 15px;
+            position: relative;
+            padding: 8px 0;
+            transition: color 0.3s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-btn {
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            padding: 120px 60px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* TICKET INFO SECTION */
+        .ticket-info-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .ticket-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUp 0.8s ease-out backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ticket-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.2);
+        }
+
+        .ticket-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .ticket-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .ticket-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(37, 99, 235, 0.1);
+        }
+
+        .ticket-card-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .ticket-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .ticket-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 0 30px;
+        }
+
+        .ticket-list-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #475569;
+            transition: all 0.3s;
+        }
+
+        .ticket-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .ticket-list-item:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .ticket-list-item::before {
+            content: '•';
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .status-badge {
+            margin-left: auto;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-high { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .status-medium { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .status-low { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+        /* CHART SECTION */
+        .chart-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .chart-box {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .chart-box:hover::before {
+            left: 100%;
+        }
+
+        .chart-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.15);
+        }
+
+        .chart-box h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-box h3::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 968px) {
+            .ticket-list { grid-template-columns: 1fr; }
+            .chart-section { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 15px 20px; }
+            .nav-links { gap: 20px; }
+            .container { padding: 100px 20px 20px; }
+            .chart-wrapper { height: 250px; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Background Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- PREMIUM NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">AI Ticket System</div>
+        <div class="nav-links">
+            <a href="create-ticket.html">Create Ticket</a>
+            <a href="history.html">History</a>
+            <button class="nav-btn" onclick="location.href='neo_dashboard.html'">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- TICKET INFO SECTION - ONLY MOST COMMON TICKETS -->
+        <div class="ticket-info-section">
+            <div class="ticket-card">
+                <div class="ticket-card-header">
+                    <div class="ticket-card-icon">🎯</div>
+                    <div class="ticket-card-title">Most Common Tickets</div>
+                </div>
+                <ul class="ticket-list">
+                    <li class="ticket-list-item">
+                        Password Reset Requests
+                        <span class="status-badge status-high">High Volume</span>
+                    </li>
+                    <li class="ticket-list-item">
+                        VPN Access Issues
+                        <span class="status-badge status-high">High Volume</span>
+                    </li>
+                    <li class="ticket-list-item">
+                        Email Configuration
+                        <span class="status-badge status-medium">Medium</span>
+                    </li>
+                    <li class="ticket-list-item">
+                        Software Installation
+                        <span class="status-badge status-medium">Medium</span>
+                    </li>
+                    <li class="ticket-list-item">
+                        Printer Connectivity
+                        <span class="status-badge status-low">Low</span>
+                    </li>
+                    <li class="ticket-list-item">
+                        Account Unlock Requests
+                        <span class="status-badge status-high">High Volume</span>
+                    </li>
+                    <li class="ticket-list-item">
+                        Hardware Malfunction
+                        <span class="status-badge status-medium">Medium</span>
+                    </li>
+                    <li class="ticket-list-item">
+                        Network Connectivity
+                        <span class="status-badge status-medium">Medium</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CHART SECTION -->
+        <div class="chart-section">
+
+            <div class="chart-box">
+                <h3>Weekly Ticket Trend</h3>
+                <div class="chart-wrapper">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-box">
+                <h3>Ticket Distribution by Category</h3>
+                <div class="chart-wrapper">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        © 2026 AI Ticket System | Enterprise Automation Platform
+    </div>
+
+    <script>
+        // Initialize Charts
+        function initCharts() {
+            // Line Chart
+            new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+                    datasets: [{
+                        label: 'Tickets',
+                        data: [12, 18, 10, 22, 30, 15, 25],
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#2563eb',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // Pie Chart - Updated Categories
+            new Chart(document.getElementById('pieChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hardware', 'HR Support', 'Access', 'Storage', 'Miscellaneous'],
+                    datasets: [{
+                        data: [35, 20, 25, 12, 8],
+                        backgroundColor: [
+                            '#2563eb',  // Hardware - Blue
+                            '#8b5cf6',  // HR Support - Purple
+                            '#10b981',  // Access - Green
+                            '#f59e0b',  // Storage - Orange
+                            '#6b7280'   // Miscellaneous - Gray
+                        ],
+                        hoverOffset: 15,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", () => {
+            initCharts();
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.boxShadow = '0 8px 32px rgba(31, 38, 135, 0.15)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.1)';
+                navbar.style.boxShadow = '0 8px 32px rgba(31, 38, 135, 0.1)';
+            }
+        });
+    </script>
+
+</body>
+</html>

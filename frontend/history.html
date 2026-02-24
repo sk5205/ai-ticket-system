@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - AI Ticket System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --accent: #38bdf8;
+            --bg-start: #eaf4ff;
+            --bg-end: #dbeafe;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            color: #1e293b;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Particles */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(56, 189, 248, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 35%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 50%; animation-delay: 0s; }
+        .particle:nth-child(5) { left: 65%; animation-delay: 3s; }
+        .particle:nth-child(6) { left: 80%; animation-delay: 6s; }
+        .particle:nth-child(7) { left: 90%; animation-delay: 1s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* PREMIUM GLASSMORPHISM NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 60px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo::before {
+            content: "🤖";
+            font-size: 28px;
+            -webkit-text-fill-color: initial;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 15px;
+            position: relative;
+            padding: 8px 0;
+            transition: color 0.3s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            padding: 140px 60px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .page-header h2 {
+            font-size: 36px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CONTROLS BAR */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: none;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .search-box input:focus {
+            background: white;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            opacity: 0.5;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .filter select {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .filter select:hover, .filter select:focus {
+            background: white;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
+        }
+
+        .counter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            font-weight: 700;
+            color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .counter span {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* TICKETS GRID */
+        .tickets-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .ticket-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease-out backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ticket-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .ticket-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.15);
+            background: white;
+        }
+
+        .ticket-card:hover::before {
+            opacity: 1;
+        }
+
+        .ticket-card:nth-child(1) { animation-delay: 0.05s; }
+        .ticket-card:nth-child(2) { animation-delay: 0.1s; }
+        .ticket-card:nth-child(3) { animation-delay: 0.15s; }
+        .ticket-card:nth-child(4) { animation-delay: 0.2s; }
+        .ticket-card:nth-child(5) { animation-delay: 0.25s; }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .ticket-id {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary);
+            background: rgba(37, 99, 235, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .ticket-badges {
+            display: flex;
+            gap: 8px;
+        }
+
+        .priority, .status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority.low {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .priority.medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+        }
+
+        .priority.high {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .status.open {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
+        .status.closed {
+            background: rgba(100, 116, 139, 0.1);
+            color: #64748b;
+        }
+
+        .ticket-card h3 {
+            font-size: 18px;
+            color: #1e293b;
+            margin-bottom: 12px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .ticket-meta {
+            font-size: 14px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ticket-meta::before {
+            content: "🏷️";
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #64748b;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        /* LOADING SKELETON */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.5) 25%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.5) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 20px;
+            height: 120px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .container {
+                padding: 100px 20px 20px;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .filter-controls {
+                width: 100%;
+            }
+
+            .filter select {
+                flex: 1;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Animated Background Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">AI Ticket</div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+
+        <div class="page-header">
+            <h2>Ticket Activity</h2>
+            <p>Chronological record of your support requests</p>
+        </div>
+
+        <div class="top-bar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search tickets...">
+            </div>
+
+            <div class="filter-controls">
+                <div class="filter">
+                    <select id="filterPriority">
+                        <option value="All">All Priorities</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="counter">
+                <span>Total Tickets:</span>
+                <span id="ticketCount">0</span>
+            </div>
+        </div>
+
+        <div class="tickets-grid" id="ticketList">
+            <!-- Loading skeletons -->
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+        </div>
+
+    </div>
+
+    <script>
+        let allTickets = [];
+
+        document.addEventListener("DOMContentLoaded", loadTickets);
+
+        async function loadTickets() {
+            try {
+                const response = await fetch("http://127.0.0.1:8000/tickets ");
+                allTickets = await response.json();
+                displayTickets(allTickets);
+            } catch (error) {
+                console.error("Error loading tickets:", error);
+                document.getElementById("ticketList").innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h3>Failed to load tickets</h3>
+                        <p>Please check your connection and try again</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayTickets(tickets) {
+            const container = document.getElementById("ticketList");
+            
+            if (tickets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎫</div>
+                        <h3>No tickets found</h3>
+                        <p>Create your first ticket to get started</p>
+                    </div>
+                `;
+                return;
+            }
+
+            document.getElementById("ticketCount").innerText = tickets.length;
+
+            container.innerHTML = tickets.slice().reverse().map(ticket => {
+                const formattedId = "#TKT-" + String(ticket.id).padStart(3, "0");
+                const priorityClass = ticket.priority.toLowerCase();
+                const status = ticket.status || "Open";
+                const statusClass = status.toLowerCase();
+
+                return `
+                    <div class="ticket-card">
+                        <div class="ticket-header">
+                            <span class="ticket-id">${formattedId}</span>
+                            <div class="ticket-badges">
+                                <span class="priority ${priorityClass}">
+                                    ${ticket.priority}
+                                </span>
+                                <span class="status ${statusClass}">
+                                    ${status}
+                                </span>
+                            </div>
+                        </div>
+
+                        <h3>${ticket.description}</h3>
+
+                        <div class="ticket-meta">
+                            ${ticket.category} • ${new Date(ticket.created_at).toLocaleString()}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.getElementById("searchInput").addEventListener("input", function() {
+            const value = this.value.toLowerCase();
+            const filtered = allTickets.filter(ticket =>
+                ticket.description.toLowerCase().includes(value)
+            );
+            displayTickets(filtered);
+        });
+
+        document.getElementById("filterPriority").addEventListener("change", function() {
+            const value = this.value;
+            if (value === "All") {
+                displayTickets(allTickets);
+            } else {
+                const filtered = allTickets.filter(ticket =>
+                    ticket.priority === value
+                );
+                displayTickets(filtered);
+            }
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.boxShadow = '0 8px 32px rgba(31, 38, 135, 0.15)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.1)';
+                navbar.style.boxShadow = '0 8px 32px rgba(31, 38, 135, 0.1)';
+            }
+        });
+    </script>
+
+</body>
+</html>

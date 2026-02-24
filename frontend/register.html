@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ticket | Register</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --accent: #38bdf8;
+            --bg-start: #bfdbfe;
+            --bg-end: #dbeafe;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Particles */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: rgba(56, 189, 248, 0.4);
+            border-radius: 50%;
+            animation: float 18s infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 35%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 50%; animation-delay: 0s; }
+        .particle:nth-child(5) { left: 65%; animation-delay: 3s; }
+        .particle:nth-child(6) { left: 80%; animation-delay: 6s; }
+        .particle:nth-child(7) { left: 90%; animation-delay: 1s; }
+        .particle:nth-child(8) { left: 25%; animation-delay: 5s; }
+        .particle:nth-child(9) { left: 75%; animation-delay: 7s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* PREMIUM GLASSMORPHISM NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 60px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo::before {
+            content: "🤖";
+            font-size: 28px;
+            -webkit-text-fill-color: initial;
+        }
+
+        .nav-items a {
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 15px;
+            position: relative;
+            padding: 8px 0;
+            transition: color 0.3s;
+        }
+
+        .nav-items a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+        }
+
+        .nav-items a:hover {
+            color: var(--primary);
+        }
+
+        .nav-items a:hover::after {
+            width: 100%;
+        }
+
+        /* REGISTER WRAPPER */
+        .register-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 20px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* PREMIUM REGISTER CARD */
+        .register-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 50px 40px;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px rgba(31, 38, 135, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: fadeInUp 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(40px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        .register-card h2 {
+            text-align: center;
+            color: #1e40af;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .register-card > p {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 35px;
+            font-size: 15px;
+        }
+
+        /* INPUT GROUPS */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid rgba(37, 99, 235, 0.1);
+            border-radius: 16px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s;
+            outline: none;
+            color: #1e293b;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .input-group input::placeholder {
+            color: #94a3b8;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus::placeholder {
+            opacity: 0.5;
+            transform: translateX(10px);
+        }
+
+        /* Animated input border */
+        .input-group::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .input-group:focus-within::after {
+            width: 80%;
+        }
+
+        /* PASSWORD STRENGTH INDICATOR */
+        .password-strength {
+            height: 4px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .password-strength.show {
+            display: block;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+
+        .strength-bar.weak { width: 33%; background: #ef4444; }
+        .strength-bar.medium { width: 66%; background: #f59e0b; }
+        .strength-bar.strong { width: 100%; background: #10b981; }
+
+        .strength-text {
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: right;
+            color: #64748b;
+        }
+
+        /* REGISTER BUTTON */
+        .register-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 17px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .register-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+        }
+
+        .register-btn:hover::before {
+            left: 100%;
+        }
+
+        .register-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* EXTRA LINKS */
+        .extra-links {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .extra-links p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .extra-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .extra-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .extra-links a:hover {
+            color: var(--primary-dark);
+        }
+
+        .extra-links a:hover::after {
+            width: 100%;
+        }
+
+        /* FLOATING SHAPES DECORATION */
+        .shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            z-index: 0;
+            animation: float-shape 20s ease-in-out infinite;
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            top: 10%;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary-light);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 5s;
+        }
+
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: rgba(56, 189, 248, 0.5);
+            top: 50%;
+            right: 10%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float-shape {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* LOADING STATE */
+        .register-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .register-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* SUCCESS ANIMATION */
+        .success-check {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: scaleIn 0.5s ease-out;
+            display: none;
+        }
+
+        .success-check.show {
+            display: flex;
+        }
+
+        .success-check::after {
+            content: '✓';
+            color: white;
+            font-size: 40px;
+            font-weight: 700;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .register-wrapper {
+                padding: 100px 20px 20px;
+            }
+
+            .register-card {
+                padding: 40px 25px;
+            }
+
+            .register-card h2 {
+                font-size: 28px;
+            }
+
+            .shape {
+                display: none;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Background Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <!-- Animated Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- PREMIUM NAVBAR -->
+    <nav class="navbar">
+        <div class="logo" onclick="location.href='neo_dashboard.html'">AI Ticket</div>
+        <div class="nav-items">
+            <a href="neo_dashboard.html">Home</a>
+        </div>
+    </nav>
+
+    <!-- REGISTER WRAPPER -->
+    <div class="register-wrapper">
+        <div class="register-card" id="registerCard">
+            <div class="success-check" id="successCheck"></div>
+            
+            <h2 id="cardTitle">Create Account</h2>
+            <p id="cardSubtitle">Join the AI Ticket System</p>
+
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="input-group">
+                    <input type="text" id="regName" placeholder="Full Name" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="regEmail" placeholder="Email Address" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="regPassword" placeholder="Password" required oninput="checkStrength(this.value)">
+                    <div class="password-strength" id="strengthBox">
+                        <div class="strength-bar" id="strengthBar"></div>
+                    </div>
+                    <div class="strength-text" id="strengthText"></div>
+                </div>
+
+                <button type="submit" class="register-btn" id="registerBtn">
+                    <span>Create Account</span>
+                </button>
+            </form>
+
+            <div class="extra-links" id="extraLinks">
+                <p>Already a user? <a href="login.html">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password Strength Checker
+        function checkStrength(password) {
+            const strengthBox = document.getElementById('strengthBox');
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            if (password.length === 0) {
+                strengthBox.classList.remove('show');
+                strengthText.textContent = '';
+                return;
+            }
+            
+            strengthBox.classList.add('show');
+            
+            let strength = 0;
+            if (password.length >= 6) strength++;
+            if (password.length >= 10) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            strengthBar.className = 'strength-bar';
+            
+            if (strength <= 2) {
+                strengthBar.classList.add('weak');
+                strengthText.textContent = 'Weak password';
+                strengthText.style.color = '#ef4444';
+            } else if (strength <= 4) {
+                strengthBar.classList.add('medium');
+                strengthText.textContent = 'Medium strength';
+                strengthText.style.color = '#d97706';
+            } else {
+                strengthBar.classList.add('strong');
+                strengthText.textContent = 'Strong password';
+                strengthText.style.color = '#059669';
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById("registerBtn");
+            const card = document.getElementById("registerCard");
+            const form = document.getElementById("registerForm");
+            const extraLinks = document.getElementById("extraLinks");
+            
+            // Add loading state
+            btn.classList.add("loading");
+            btn.querySelector("span").style.opacity = "0";
+
+            const name = document.getElementById("regName").value;
+            const email = document.getElementById("regEmail").value;
+            const password = document.getElementById("regPassword").value;
+
+            // Simulate processing delay for better UX
+            setTimeout(() => {
+                const user = {
+                    name: name,
+                    email: email,
+                    password: password
+                };
+
+                localStorage.setItem("user", JSON.stringify(user));
+
+                // Success animation
+                btn.classList.remove("loading");
+                btn.style.background = "linear-gradient(135deg, #10b981, #059669)";
+                btn.querySelector("span").textContent = "Success!";
+                btn.querySelector("span").style.opacity = "1";
+
+                // Hide form and show success
+                setTimeout(() => {
+                    form.style.display = "none";
+                    extraLinks.style.display = "none";
+                    document.getElementById("cardTitle").textContent = "Welcome Aboard!";
+                    document.getElementById("cardSubtitle").textContent = `Hello, ${name}! Your account is ready.`;
+                    document.getElementById("successCheck").classList.add("show");
+                    
+                    // Redirect after showing success
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 2000);
+                }, 800);
+
+            }, 1500);
+        }
+
+        // Input focus effects
+        document.querySelectorAll("input").forEach(input => {
+            input.addEventListener("focus", function() {
+                this.parentElement.style.transform = "scale(1.02)";
+            });
+            
+            input.addEventListener("blur", function() {
+                this.parentElement.style.transform = "scale(1)";
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.boxShadow = '0 8px 32px rgba(31, 38, 135, 0.15)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.1)';
+                navbar.style.boxShadow = '0 8px 32px rgba(31, 38, 135, 0.1)';
+            }
+        });
+    </script>
+
+</body>
+</html>
