@@ -5,3 +5,7 @@ __pycache__/
 *.pth
 dataset/
 model/
+
+backend/model/
+backend/dataset/
+backend/tickets.db
