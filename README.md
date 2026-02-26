@@ -14,6 +14,8 @@ Workflow:
 User Input → AI Prediction (Category & Priority) → Database Storage → Dashboard Display
 
 🚀 Key Features
+
+
 1️⃣ Ticket Submission
 
 User-friendly HTML form
